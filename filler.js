@@ -22,7 +22,7 @@ var Filler = function (options) {
 	// Fill the goddam elements
 	for (var i = 0; i < $fillable.length; i++) {
 		var $el = $fillable[i],
-				content = SOURCES[opt.source].split(' ', $el.getAttribute('filler'));
+				content = getContent($el);
 		
 		if ( isHeading($el.tagName) ) {
 			$el.innerHTML = stripEndingPunctuation(content.join(' '));
@@ -65,6 +65,29 @@ var Filler = function (options) {
 		if ( lastCharacter == ',' || lastCharacter == '.' ) {
 			return content.substring(0, content.length - 1);
 		}
+		return content;
+	}
+
+	/**
+	 * Get Content
+	 * @return Array
+	 */
+	function getContent(el) {
+		var extension = el.getAttribute('filler'),
+				content = [],
+				limit = extension;
+		
+		// Fill the content array until the desired extension is reached
+		do {
+			var partial = [];
+			
+			partial.push(SOURCES[opt.source].split(' ', limit));
+			content = content.concat.apply(content, partial);
+					
+			limit = extension - content.length;
+		} 
+		while ( content.length < extension );
+
 		return content;
 	}
 }
