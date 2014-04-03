@@ -21,8 +21,14 @@ var Filler = function (options) {
 
 	// Fill the goddam elements
 	for (var i = 0; i < $fillable.length; i++) {
-		var content = SOURCES[opt.source].split(' ', $fillable[i].getAttribute('filler'));
-		$fillable[i].innerHTML = content.join(' ');
+		var $el = $fillable[i],
+				content = SOURCES[opt.source].split(' ', $el.getAttribute('filler'));
+		
+		if ( isHeading($el.tagName) ) {
+			$el.innerHTML = stripEndingPunctuation(content.join(' '));
+		} else {
+			$el.innerHTML = content.join(' ');
+		}
 	}
 
 	/**
@@ -42,5 +48,23 @@ var Filler = function (options) {
 	    }
 	  }
 	  return matchingElements;
+	}
+
+	// Is Heading?
+	function isHeading(tag) {
+		var h = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+		for (var i = 0; i < h.length; i++) {
+			if (h[i] == tag) { return true; }
+		}
+		return false;
+	}
+
+	// Strip last element
+	function stripEndingPunctuation (content) {
+		var lastCharacter = content.charAt(content.length - 1);
+		if ( lastCharacter == ',' || lastCharacter == '.' ) {
+			return content.substring(0, content.length - 1);
+		}
+		return content;
 	}
 }
