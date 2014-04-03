@@ -35,7 +35,13 @@ var Filler = function (options) {
 	 * Functions
 	 */
 
-	// Get elements
+	/**
+	 * Get Elements With Attribute
+	 * Selects all elements that match a certain attribute
+	 *
+	 * @var attribute, String
+	 * @return Array
+	 */
 	function getAllElementsWithAttribute(attribute) {
 	  var matchingElements = [];
 	  var allElements = document.getElementsByTagName('*');
@@ -50,7 +56,13 @@ var Filler = function (options) {
 	  return matchingElements;
 	}
 
-	// Is Heading?
+	/**
+	 * Is Heading?
+	 * Checks if tag is a heading
+	 *
+	 * @var tag, String
+	 * @return bool
+	 */
 	function isHeading(tag) {
 		var h = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 		for (var i = 0; i < h.length; i++) {
@@ -59,8 +71,14 @@ var Filler = function (options) {
 		return false;
 	}
 
-	// Strip last element
-	function stripEndingPunctuation (content) {
+	/**
+	 * Strip Ending Punctuation
+	 * Strips an ending dot or comma
+	 *
+	 * @var content, String
+	 * @return String
+	 */
+	function stripEndingPunctuation(content) {
 		var lastCharacter = content.charAt(content.length - 1);
 		if ( lastCharacter == ',' || lastCharacter == '.' ) {
 			return content.substring(0, content.length - 1);
