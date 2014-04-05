@@ -1,7 +1,8 @@
 var fillerPrototype = {
 	// Defaults
 	defaults: {
-		source: 'lorem'
+		source: 'lorem',
+		randomize: false
 	},
 
 	// Sources
@@ -15,6 +16,8 @@ var fillerPrototype = {
 	
 	// Elements to be filled	
 	fillable: new Array(), 
+
+	source: '',
 	
 
 	/**
@@ -64,7 +67,14 @@ var fillerPrototype = {
 		do {
 			var partial = [];
 
-			partial.push(this.SOURCES[this.options.source].split(' ', limit));
+			var text;
+			if ( this.options.randomize === true ) { 
+				text = this.generateRandomOrder(limit);
+			} else {
+				text = this.source.split(' ', limit);
+			}
+
+			partial.push(text);
 			content = content.concat.apply(content, partial);
 					
 			limit = extension - content.length;
@@ -112,7 +122,58 @@ var fillerPrototype = {
 				$el.innerHTML = content.join(' ');
 			}
 		}
-	}
+	},
+
+	/**
+	 * Generate Random Order
+	 * Returns source in random order
+	 *
+	 * @return Array
+	 */
+	generateRandomOrder: function (limit) {
+		if ( this.options.randomize !== true ) return false;
+
+		var parts = this.source.split('.');
+
+		for (var i = 0; i < parts.length; i++) {
+			if ( parts[i] === '' ) {
+				parts.splice(parts.indexOf(i), 1);
+			} else {
+				parts[i] = parts[i].trim();
+			}
+		}
+
+		return this.shuffle(parts).join('. ').split(' ', limit);
+	},
+
+	/**
+	 * Shuffle
+	 * The Fisher-Yates (aka Knuth) shuffle. 
+	 * Returns an array keys in random order.
+	 *
+	 * @source https://github.com/coolaj86/knuth-shuffle
+	 */
+  shuffle: function (array) {
+    var currentIndex = array.length
+      , temporaryValue
+      , randomIndex
+      ;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
 }
 
 /* Constructor */
@@ -120,6 +181,9 @@ function Filler (arguments) {
 	// Merge options
 	for ( var k in this.defaults ) { this.options[k] = this.defaults[k]; }
 	for ( var k in arguments ) 	{ this.options[k] = arguments[k]; }
+
+	// Set source from options
+	this.source = this.SOURCES[this.options.source];
 
 	// Fill the goddam elements
 	return this.fillElements();
