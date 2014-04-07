@@ -47,12 +47,13 @@ var fillerPrototype = {
 	 * @var content, String
 	 * @return String
 	 */
-	stripEndingPunctuation: function (content) {
-		var lastCharacter = content.charAt(content.length - 1);
+	stripEndingPunctuation: function (string) {
+		var lastCharacter = string.charAt(string.length - 1);
+
 		if ( lastCharacter == ',' || lastCharacter == '.' ) {
-			return content.substring(0, content.length - 1);
+			return string.substring(0, string.length - 1);
 		}
-		return content;
+		return string;
 	},
 
 	/**
@@ -142,21 +143,28 @@ var fillerPrototype = {
 	},
 
 	/**
+	 * Clean
+	 * Calls all necessary actions to return a properly
+	 * formatted content.
 	 *
+	 * @arg Array
+	 * @return String
 	 */
 	clean: function (content) {
 		content = this.preventOrphans(content);
 
-		if ( this.isHeading(this.element.tagName) ) {
-			content = content.join(' ');
-			return this.stripEndingPunctuation(content);
-		} else {
-			return content.join(' ');
-		}
+		content[content.length - 1] = this.stripEndingPunctuation(content[content.length - 1]);
+
+		return content.join(' ');
 	},
 
 	/**
+	 * Prevent Orphans
+	 * Removes dots and commas between the last and second last words,
+	 * and sets the last word to lowercase when it's a dot case
 	 *
+	 * @arg Array
+	 * @return Array
 	 */
 	preventOrphans: function (content) {
 		var affectedKey = content.slice((content.length - 2), (content.length - 1)).toString();
