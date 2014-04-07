@@ -18,6 +18,7 @@ var fillerPrototype = {
 	fillable: new Array(), 
 
 	source: '',
+	content: '',
 	
 
 	/**
@@ -81,7 +82,7 @@ var fillerPrototype = {
 		} 
 		while ( content.length < extension );
 
-		return content;
+		this.content = content;
 	},
 
 	/**
@@ -113,14 +114,10 @@ var fillerPrototype = {
 		this.fillable = this.getAllElementsWithAttribute('filler');
 		
 		for (var i = 0; i < this.fillable.length; i++) {
-			var $el = this.fillable[i],
-					content = this.getContent($el);
+			var $el = this.fillable[i];
 			
-			if ( this.isHeading($el.tagName) ) {
-				$el.innerHTML = this.stripEndingPunctuation(content.join(' '));
-			} else {
-				$el.innerHTML = content.join(' ');
-			}
+			this.getContent($el);
+			$el.innerHTML = this.clean($el);
 		}
 	},
 
@@ -145,6 +142,36 @@ var fillerPrototype = {
 
 		return this.shuffle(parts).join('. ').split(' ', limit);
 	},
+
+	/**
+	 *
+	 */
+	clean: function (element) {
+		this.preventOrphans();
+
+		if ( this.isHeading(element.tagName) ) {
+			content = this.content.join(' ');
+			return this.stripEndingPunctuation(content);
+		} else {
+			return this.content.join(' ');
+		}
+	},
+
+	/**
+	 *
+	 */
+	preventOrphans: function (content) {
+		var affectedKey = this.content.slice((this.content.length - 2), (this.content.length - 1)).toString();
+		var sep = affectedKey.charAt(affectedKey.length - 1);
+
+		this.content[this.content.length - 2] = this.stripEndingPunctuation(this.content[this.content.length - 2]);
+				
+		if ( sep == '.' ) {
+			this.content[this.content.length - 1] = this.content[this.content.length - 1].toLowerCase();
+		}
+	},
+
+
 
 	/**
 	 * Shuffle
