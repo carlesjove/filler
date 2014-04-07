@@ -18,7 +18,7 @@ var fillerPrototype = {
 	fillable: new Array(), 
 
 	source: '',
-	content: '',
+	element: '',
 	
 
 	/**
@@ -59,8 +59,8 @@ var fillerPrototype = {
 	 * Get Content
 	 * @return Array
 	 */
-	getContent: function (el) {
-		var extension = el.getAttribute('filler'),
+	getContent: function () {
+		var extension = this.element.getAttribute('filler'),
 				content = [],
 				limit = extension;
 		
@@ -82,7 +82,7 @@ var fillerPrototype = {
 		} 
 		while ( content.length < extension );
 
-		this.content = content;
+		return this.clean(content);
 	},
 
 	/**
@@ -114,10 +114,8 @@ var fillerPrototype = {
 		this.fillable = this.getAllElementsWithAttribute('filler');
 		
 		for (var i = 0; i < this.fillable.length; i++) {
-			var $el = this.fillable[i];
-			
-			this.getContent($el);
-			$el.innerHTML = this.clean($el);
+			this.element = this.fillable[i];
+			this.element.innerHTML = this.getContent();
 		}
 	},
 
@@ -146,14 +144,14 @@ var fillerPrototype = {
 	/**
 	 *
 	 */
-	clean: function (element) {
-		this.preventOrphans();
+	clean: function (content) {
+		content = this.preventOrphans(content);
 
-		if ( this.isHeading(element.tagName) ) {
-			content = this.content.join(' ');
+		if ( this.isHeading(this.element.tagName) ) {
+			content = content.join(' ');
 			return this.stripEndingPunctuation(content);
 		} else {
-			return this.content.join(' ');
+			return content.join(' ');
 		}
 	},
 
@@ -161,14 +159,15 @@ var fillerPrototype = {
 	 *
 	 */
 	preventOrphans: function (content) {
-		var affectedKey = this.content.slice((this.content.length - 2), (this.content.length - 1)).toString();
+		var affectedKey = content.slice((content.length - 2), (content.length - 1)).toString();
 		var sep = affectedKey.charAt(affectedKey.length - 1);
 
-		this.content[this.content.length - 2] = this.stripEndingPunctuation(this.content[this.content.length - 2]);
+		content[content.length - 2] = this.stripEndingPunctuation(content[content.length - 2]);
 				
 		if ( sep == '.' ) {
-			this.content[this.content.length - 1] = this.content[this.content.length - 1].toLowerCase();
+			content[content.length - 1] = content[content.length - 1].toLowerCase();
 		}
+		return content;
 	},
 
 
