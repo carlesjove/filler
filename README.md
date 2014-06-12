@@ -1,7 +1,7 @@
 filler
 ======
 
-A fucking JavaScript text filler. Cool for early stages of web development when you ust need Lorem Ipsum and the kind.
+A fucking JavaScript text filler. Cool for early stages of web development when you just need Lorem Ipsum and the kind.
 
 ## How to use
 
@@ -45,6 +45,7 @@ Filler is damn easy to use. Just include the script, init Filler with `var fllr 
 ## Parameters
 
 `source`: Choose a source text
+	
 	- `lorem`: (default) Your beloved Lorem Ipsum
 	- `pla`: A fragment of *El quadern gris*, one of the most acclaimed books by the catalan writer Josep Pla
 
