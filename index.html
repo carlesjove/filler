@@ -7,24 +7,36 @@
 </head>
 <body>
 	<header class="site-header">
-		<h1 filler="12"></h1>
+		<h1 filler="8"></h1>
 	</header>
 
-	<p filler="200"></p>
+	<article>
+		<h1 filler="20"></h1>
+		<p filler="200"></p>
+		<p filler="88"></p>
+	</article>
 
-	<p class="nothing">Aquest s'ha de quedar igual</p>
+	<p class="nothing">*This shalt not be filled*</p>
 
 	<script type="text/javascript" src="filler.js"></script>
 	
 	<script>
 		// Do the default thing	
-		// Filler();
+		// var fllr = new Filler();
 	</script>
 	
 	<script>
-		// Do the cool thing
+		// Choose a source
+		// var fllr = new Filler({
+		// 	source: 'pla'
+		// });
+	</script>
+
+	<script>
+		// Choose a source + randomize
 		var fllr = new Filler({
-			source: 'pla'
+			source: 'pla',
+			randomize: true
 		});
 	</script>
 </body>

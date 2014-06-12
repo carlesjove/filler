@@ -1,7 +1,8 @@
 var fillerPrototype = {
 	// Defaults
 	defaults: {
-		source: 'lorem'
+		source: 'lorem',
+		randomize: false
 	},
 
 	// Sources
@@ -15,6 +16,9 @@ var fillerPrototype = {
 	
 	// Elements to be filled	
 	fillable: new Array(), 
+
+	source: '',
+	element: '',
 	
 
 	/**
@@ -43,20 +47,21 @@ var fillerPrototype = {
 	 * @var content, String
 	 * @return String
 	 */
-	stripEndingPunctuation: function (content) {
-		var lastCharacter = content.charAt(content.length - 1);
+	stripEndingPunctuation: function (string) {
+		var lastCharacter = string.charAt(string.length - 1);
+
 		if ( lastCharacter == ',' || lastCharacter == '.' ) {
-			return content.substring(0, content.length - 1);
+			return string.substring(0, string.length - 1);
 		}
-		return content;
+		return string;
 	},
 
 	/**
 	 * Get Content
 	 * @return Array
 	 */
-	getContent: function (el) {
-		var extension = el.getAttribute('filler'),
+	getContent: function () {
+		var extension = this.element.getAttribute('filler'),
 				content = [],
 				limit = extension;
 		
@@ -64,14 +69,21 @@ var fillerPrototype = {
 		do {
 			var partial = [];
 
-			partial.push(this.SOURCES[this.options.source].split(' ', limit));
+			var text;
+			if ( this.options.randomize === true ) { 
+				text = this.generateRandomOrder(limit);
+			} else {
+				text = this.source.split(' ', limit);
+			}
+
+			partial.push(text);
 			content = content.concat.apply(content, partial);
 					
 			limit = extension - content.length;
 		} 
 		while ( content.length < extension );
 
-		return content;
+		return this.clean(content);
 	},
 
 	/**
@@ -103,16 +115,99 @@ var fillerPrototype = {
 		this.fillable = this.getAllElementsWithAttribute('filler');
 		
 		for (var i = 0; i < this.fillable.length; i++) {
-			var $el = this.fillable[i],
-					content = this.getContent($el);
-			
-			if ( this.isHeading($el.tagName) ) {
-				$el.innerHTML = this.stripEndingPunctuation(content.join(' '));
+			this.element = this.fillable[i];
+			this.element.innerHTML = this.getContent();
+		}
+	},
+
+	/**
+	 * Generate Random Order
+	 * Returns source in random order
+	 *
+	 * @return Array
+	 */
+	generateRandomOrder: function (limit) {
+		if ( this.options.randomize !== true ) return false;
+
+		var parts = this.source.split('.');
+
+		for (var i = 0; i < parts.length; i++) {
+			if ( parts[i] === '' ) {
+				parts.splice(parts.indexOf(i), 1);
 			} else {
-				$el.innerHTML = content.join(' ');
+				parts[i] = parts[i].trim();
 			}
 		}
-	}
+
+		return this.shuffle(parts).join('. ').split(' ', limit);
+	},
+
+	/**
+	 * Clean
+	 * Calls all necessary actions to return a properly
+	 * formatted content.
+	 *
+	 * @arg Array
+	 * @return String
+	 */
+	clean: function (content) {
+		content = this.preventOrphans(content);
+
+		content[content.length - 1] = this.stripEndingPunctuation(content[content.length - 1]);
+
+		return content.join(' ');
+	},
+
+	/**
+	 * Prevent Orphans
+	 * Removes dots and commas between the last and second last words,
+	 * and sets the last word to lowercase when it's a dot case
+	 *
+	 * @arg Array
+	 * @return Array
+	 */
+	preventOrphans: function (content) {
+		var affectedKey = content.slice((content.length - 2), (content.length - 1)).toString();
+		var sep = affectedKey.charAt(affectedKey.length - 1);
+
+		content[content.length - 2] = this.stripEndingPunctuation(content[content.length - 2]);
+				
+		if ( sep == '.' ) {
+			content[content.length - 1] = content[content.length - 1].toLowerCase();
+		}
+		return content;
+	},
+
+
+
+	/**
+	 * Shuffle
+	 * The Fisher-Yates (aka Knuth) shuffle. 
+	 * Returns an array keys in random order.
+	 *
+	 * @source https://github.com/coolaj86/knuth-shuffle
+	 */
+  shuffle: function (array) {
+    var currentIndex = array.length
+      , temporaryValue
+      , randomIndex
+      ;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
 }
 
 /* Constructor */
@@ -120,6 +215,9 @@ function Filler (arguments) {
 	// Merge options
 	for ( var k in this.defaults ) { this.options[k] = this.defaults[k]; }
 	for ( var k in arguments ) 	{ this.options[k] = arguments[k]; }
+
+	// Set source from options
+	this.source = this.SOURCES[this.options.source];
 
 	// Fill the goddam elements
 	return this.fillElements();
