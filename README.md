@@ -45,9 +45,8 @@ Filler is damn easy to use. Just include the script, init Filler with `var fllr 
 ## Parameters
 
 `source`: Choose a source text
-	
-	- `lorem`: (default) Your beloved Lorem Ipsum
-	- `pla`: A fragment of *El quadern gris*, one of the most acclaimed books by the catalan writer Josep Pla
+	`lorem`: (default) Your beloved Lorem Ipsum
+	`pla`: A fragment of *El quadern gris*, one of the most acclaimed books by the catalan writer Josep Pla
 
 `randomize`: (bool) Randomize the order of text, so every paragraph starts different. Default is false.
 
