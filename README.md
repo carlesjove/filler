@@ -1,7 +1,7 @@
 filler
 ======
 
-A fucking JavaScript text filler. Cool for early stages of web development when you just need Lorem Ipsum and the kind.
+A JavaScript text filler. Cool for early stages of web development when you just need Lorem Ipsum and the kind.
 
 ## How to use
 
